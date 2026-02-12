@@ -18,8 +18,8 @@
 #include <time.h>
 
 // VFD configuration
-#define VFD_BUS       0       // Internal I2C bus
-#define VFD_ADDRESS   0x08    // 7-bit address (0x10 in 8-bit notation)
+#define VFD_BUS       1       // External I2C bus (QWIIC/SAO)
+#define VFD_ADDRESS   0x10    // 7-bit I2C address
 #define VFD_SPEED_HZ  100000  // 100kHz
 #define VFD_CHARS     12      // Display character count
 
@@ -133,14 +133,18 @@ static void plugin_service_run(plugin_context_t* ctx) {
         struct tm timeinfo;
         localtime_r(&now, &timeinfo);
 
-        // Format: "  HH:MM:SS  " (centered in 12 chars)
-        snprintf(display_buf, sizeof(display_buf), "  %02d:%02d:%02d  ",
+        // Format: "  HH MM SS  " (centered in 12 chars)
+        snprintf(display_buf, sizeof(display_buf), "  %02d %02d %02d  ",
                  timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
         vfd_write_text(display_buf);
 
         asp_plugin_delay_ms(500);
     }
+
+    // Blank display and power down before exiting the service
+    vfd_write_text("            ");
+    vfd_write_reg(VFD_REG_CONTROL, 0);
 
     asp_log_info("vfdclock", "VFD Clock service stopped");
 }
