@@ -1,0 +1,11 @@
+{
+    "name": "VFD Clock",
+    "slug": "vfdclock",
+    "version": "1.0.0",
+    "author": "cavac",
+    "description": "Displays clock on I2C VFD display",
+    "type": "service",
+    "api_version": 2,
+    "permissions": [],
+    "autostart": false
+}
