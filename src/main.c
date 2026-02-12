@@ -8,6 +8,7 @@
 //   Register 0:     System control (bit 0 = enable, bit 1 = test, bit 2 = LED)
 //   Register 1:     Display offset
 //   Registers 4-5:  Scroll speed
+//   Register 6:     Brightness (0-255, default 110)
 //   Registers 10+:  ASCII text data buffer
 //
 // To change bus/address, modify VFD_BUS and VFD_ADDRESS below.
@@ -24,9 +25,10 @@
 #define VFD_CHARS     12      // Display character count
 
 // VFD register addresses
-#define VFD_REG_CONTROL  0
-#define VFD_REG_OFFSET   1
-#define VFD_REG_TEXT     10
+#define VFD_REG_CONTROL     0
+#define VFD_REG_OFFSET      1
+#define VFD_REG_BRIGHTNESS  6
+#define VFD_REG_TEXT        10
 
 // VFD control bits
 #define VFD_CTRL_ENABLE  (1 << 0)
@@ -58,8 +60,9 @@ static bool vfd_init(void) {
         return false;
     }
 
-    // Enable display
+    // Enable display and set max brightness
     vfd_write_reg(VFD_REG_CONTROL, VFD_CTRL_ENABLE);
+    vfd_write_reg(VFD_REG_BRIGHTNESS, 110); // DON'T GO MUCH HIGHER, THIS WILL REDUCE THE LIFESPAN DRASTICALLY
     return true;
 }
 
