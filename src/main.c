@@ -48,14 +48,14 @@ static bool vfd_init(void) {
     for (uint8_t bus = 0; bus <= 1; bus++) {
         asp_log_info("vfdclock", "Scanning I2C bus %d for devices...", bus);
         for (uint16_t addr = 0x08; addr < 0x78; addr++) {
-            if (asp_i2c_probe(bus, addr)) {
+            if (asp_i2c_probe(bus, addr) == ASP_OK) {
                 asp_log_info("vfdclock", "  Bus %d: found device at 0x%02X", bus, addr);
             }
         }
     }
 
-    vfd_dev = asp_i2c_open(plugin_ctx, VFD_BUS, VFD_ADDRESS, VFD_SPEED_HZ);
-    if (vfd_dev == NULL) {
+    asp_err_t err = asp_i2c_open(plugin_ctx, &vfd_dev, VFD_BUS, VFD_ADDRESS, VFD_SPEED_HZ);
+    if (err != ASP_OK) {
         asp_log_error("vfdclock", "Failed to open I2C device at 0x%02X on bus %d", VFD_ADDRESS, VFD_BUS);
         return false;
     }
